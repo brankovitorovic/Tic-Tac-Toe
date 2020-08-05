@@ -6,12 +6,14 @@ public class Table {
 
 	private String[][] table;
 	private HashMap<String, int[]> placesOnBoard;
-
+	private int[] lastMoveOnTable;
+	
 	public Table() {
 
 		this.table = new String[4][4]; // make 4x4 but 0 row and 0 column will always be empty, because it makes easier to follow coordinates
 		this.placesOnBoard = new HashMap<>(); // this is just for the print table 
-
+		this.lastMoveOnTable = new int[2];
+		
 		setEmptyBoard();
 		
 		this.placesOnBoard.put("1 1", new int[] { 2, 4 });
@@ -29,11 +31,84 @@ public class Table {
 	public void makeMove(String s, String symbol){ // put symbol in string for table
 		int[] c = getCoordinatesFromString(s);
 		
+		this.lastMoveOnTable = c;
+		
 		this.table[c[0]][c[1]] = symbol;
 		
 	}
 
-	public int[] possibilityToWin(String symbol,int number){ // if there are two in a row and third is missing, or check for the win
+	public boolean isSomeoneWin(String symbol){ // check if there is a winner for given symbol
+		int counter = 0;
+
+		// check rows
+		
+		for(int i = 1; i < 4; i++){
+			for(int j = 1; j < 4; j++){
+				if(this.table[j][i].equals(symbol)){
+					counter++;
+				}
+			}
+			if(counter == 3){
+				return true;
+			}
+			counter = 0;
+		}
+		
+		counter = 0;
+		
+		// check columns
+		
+		for(int i = 1; i < 4; i++){
+			for(int j = 1; j < 4; j++){
+				if(this.table[i][j].equals(symbol)){
+					counter++;
+				}
+			}
+			if(counter == 3){
+				return true; 
+			}
+			counter = 0;
+		}
+
+		counter = 0;
+		
+		// check main diagonal
+
+		for(int i = 1; i < 4; i++){
+			for(int j = 1; j < 4; j++){
+				if(i == j){
+					if(this.table[i][j].equals(symbol)){
+						counter++;
+					}
+				}
+			}
+		}
+
+		if(counter == 3){
+			return true;
+		}
+		
+		counter = 0;
+		
+		for(int i = 1; i < 4; i++){
+			for(int j = 1; j < 4; j++){
+				if(i + j == 4){
+					if(this.table[i][j].equals(symbol)){
+						counter++;
+					}
+				}
+			}
+		}
+
+		if(counter == 3){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public int[] isTwoSymbolsAndOneEmpty(String symbol){ // if there are two same in a row and third is missing, returns coordinate on board 
+											// or -1 if there is no two same symbols and one empty in row, column and any diagonal
 		int counter = 0;
 		int counterEmpty = 0;
 		int[] emptySpace = new int[2];
@@ -51,10 +126,8 @@ public class Table {
 					emptySpace[1] = i;
 				}
 			}
-			if(counter == number && counterEmpty + number == 3){ // if number parametar is 3, its checking for the win, so counterEmppty + number 
-																// shoud be 3 ( empty = 0 ) or if there is 2 in same row or column and 1 empty 
-																// thet we store to make win with last symbol or to block opponent victory
-				return emptySpace; // if returns 0 it means there is win, PlayGame class will found out who is winner
+			if(counter == 2 && counterEmpty == 1){ // this means there is 2 in same row and third place is empty ( same for the columns and diagonals )
+				return emptySpace;
 			}
 			counter = 0;
 			counterEmpty = 0;
@@ -81,7 +154,7 @@ public class Table {
 				}
 			}
 
-			if(counter == number && counterEmpty + number == 3){
+			if(counter == 2 && counterEmpty == 1){
 				return emptySpace; 
 			}
 			counter = 0;
@@ -89,6 +162,7 @@ public class Table {
 			emptySpace[0] = 0;
 			emptySpace[1] = 0;
 		}
+		
 		// check main diagonal 
 
 		counter = 0;
@@ -113,7 +187,7 @@ public class Table {
 			
 		}
 
-		if(counter == number && counterEmpty+number == 3){
+		if(counter == 2 && counterEmpty == 1){
 			return emptySpace;
 		}
 		
@@ -140,7 +214,7 @@ public class Table {
 			
 		}
 
-		if(counter == number && counterEmpty+number == 3){
+		if(counter == 2 && counterEmpty == 1){
 			return emptySpace;
 		}
 		
@@ -245,6 +319,10 @@ public class Table {
 				this.table[j][i] = " ";
 			}
 		}
+	}
+	
+	public int[] getLastMoveOnTable() {
+		return lastMoveOnTable;
 	}
 	
 }
