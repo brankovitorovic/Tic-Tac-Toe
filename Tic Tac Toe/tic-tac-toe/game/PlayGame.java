@@ -1,4 +1,4 @@
-package gameAI;
+package game;
 
 import java.util.Scanner;
 

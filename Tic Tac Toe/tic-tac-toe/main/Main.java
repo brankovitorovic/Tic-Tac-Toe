@@ -1,8 +1,8 @@
-package mainAI;
+package main;
 
-import gameAI.PlayGame;
+import game.PlayGame;
 
-public class MainAI {
+public class Main {
 
 	public static void main(String[] args) {
 		

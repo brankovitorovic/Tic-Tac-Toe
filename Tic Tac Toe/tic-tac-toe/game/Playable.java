@@ -1,4 +1,4 @@
-package gameAI;
+package game;
 
 public interface Playable {
 
